@@ -3,6 +3,12 @@
 
 ---
 
+Deploy: https://anilmedicalappointment.vercel.app
+
+Backend Check: https://anilmedicalappointment.onrender.com/health
+
+---
+
 ## 🆓 Bland.ai Setup (Free - No Credit Card!)
 
 ### Step 1: Create Free Account

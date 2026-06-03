@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Mic2, Play, Download, Calendar } from 'lucide-react'
+import { Mic2, Download, Calendar } from 'lucide-react'
 import { recordingsAPI } from '../services/api'
 
 export default function RecordingsPage() {
   const [recordings, setRecordings] = useState([])
   const [loading, setLoading] = useState(true)
-  const [playing, setPlaying] = useState(null)
 
   useEffect(() => {
     recordingsAPI.getAll()
@@ -15,10 +14,10 @@ export default function RecordingsPage() {
   }, [])
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="p-4 lg:p-6 space-y-5 max-w-5xl mx-auto">
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Recordings</h1>
-        <p className="text-white/40 text-sm mt-0.5">{recordings.length} call recordings</p>
+        <h1 className="font-display text-xl lg:text-2xl font-bold text-white">Recordings</h1>
+        <p className="text-white/40 text-xs lg:text-sm mt-0.5">{recordings.length} call recordings</p>
       </div>
 
       {loading ? (
@@ -32,48 +31,43 @@ export default function RecordingsPage() {
       ) : (
         <div className="space-y-3">
           {recordings.map(rec => (
-            <div key={rec._id} className="card p-5">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0">
-                  <Mic2 className="w-5 h-5 text-brand-400" />
+            <div key={rec._id} className="card p-4 lg:p-5">
+              <div className="flex items-start gap-3 lg:gap-4">
+                <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-brand-500/10 flex items-center justify-center shrink-0">
+                  <Mic2 className="w-4 h-4 lg:w-5 lg:h-5 text-brand-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-medium text-white">{rec.patientName}</p>
+                      <p className="font-medium text-white text-sm lg:text-base">{rec.patientName}</p>
                       <p className="text-xs text-white/40 font-mono mt-0.5">{rec.phoneNumber}</p>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-white/30 shrink-0">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(rec.createdAt).toLocaleDateString('en-IN')}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="text-xs text-white/30 flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        <span className="hidden sm:inline">{new Date(rec.createdAt).toLocaleDateString('en-IN')}</span>
+                      </div>
+                      {rec.recordingUrl && (
+                        <a href={rec.recordingUrl} download
+                          className="p-2 rounded-lg bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-colors">
+                          <Download className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
                   </div>
+
                   {rec.symptoms && (
                     <p className="text-xs text-white/50 mt-2 bg-white/3 rounded-lg px-3 py-2">
                       <span className="text-white/30">Symptoms: </span>{rec.symptoms}
                     </p>
                   )}
+
                   {rec.recordingUrl && (
                     <div className="mt-3">
-                      <audio
-                        controls
-                        src={rec.recordingUrl}
-                        className="w-full h-8"
-                        onPlay={() => setPlaying(rec._id)}
-                        onPause={() => setPlaying(null)}
-                      />
+                      <audio controls src={rec.recordingUrl} className="w-full h-8" />
                     </div>
                   )}
                 </div>
-                {rec.recordingUrl && (
-                  <a
-                    href={rec.recordingUrl}
-                    download
-                    className="shrink-0 p-2 rounded-lg bg-white/5 text-white/40 hover:text-white hover:bg-white/10 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                  </a>
-                )}
               </div>
             </div>
           ))}
@@ -82,3 +76,4 @@ export default function RecordingsPage() {
     </div>
   )
 }
+
